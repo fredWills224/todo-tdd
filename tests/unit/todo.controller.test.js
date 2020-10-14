@@ -27,17 +27,17 @@ describe('TodoController.createTodo', ()=>{
         expect(TodoModel.create).toBeCalledWith(newTodo);
     });
 
-    it('should return 201 response code', ()=>{
-        TodoController.createTodo(req, res, next);
+    it('should return 201 response code', async ()=>{
+        await TodoController.createTodo(req, res, next);
         //when creating a new resource in rest a status of 201 should be returned
         expect(res.statusCode).toBe(201);
         //insure response has been sent back
         expect(res._isEndCalled()).toBeTruthy();
     });
 
-    it('should return json body in response',()=>{
+    it('should return json body in response', async ()=>{
         TodoModel.create.mockReturnValue(newTodo);
-        TodoController.createTodo(req, res, next);
+        await TodoController.createTodo(req, res, next);
         //[toStrictEqual()] is used insted of [toBe()] because [newTodo] and
         //[creatModel] have different reference numbers in memory
         expect(res._getJSONData()).toStrictEqual(newTodo);        

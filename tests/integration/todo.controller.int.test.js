@@ -6,6 +6,10 @@ const endpointUrl = '/todos/';
 
 describe(endpointUrl, ()=>{
     
+    beforeEach(()=>{
+        jest.setTimeout(10000);
+    });
+
     it('POST' + endpointUrl, async ()=>{
 
         const response = await request(app)
