@@ -11,5 +11,18 @@ exports.createTodo = async (req, res, next)=>{
 };
 
 exports.getTodos = async (req, res, next)=>{
-    TodoModel.find({});    
+    const allTodos = await TodoModel.find({});
+    res.status(200).json(allTodos);    
 };
+
+
+
+
+
+
+
+
+
+
+
+
