@@ -14,6 +14,14 @@ beforeEach(()=>{
     next = jest.fn();
 });
 
+describe('TodoController.getTodoById', ()=>{
+    
+    it('should have getTodoById', ()=>{
+        expect(typeof TodoController.getTodoById).toBe('function');
+    });
+
+});
+
 describe('TodoController.getTodos', ()=>{
 
     it('should have a getTodos function', ()=>{
