@@ -24,7 +24,35 @@ describe('TodoController.deleteTodo', ()=>{
         expect(typeof TodoController.deleteTodo).toBe('function');
     });
 
+    it('should call TodoModel.findByIdAndDelete', async ()=>{
+       req.params.todoId = todoId;
+       await TodoController.deleteTodo(req, res, next);
+       expect(TodoModel.findByIdAndDelete).toBeCalledWith(todoId);        
+    });
 
+    it('should return a 200 Ok and deleted todomodel', async()=>{
+        TodoModel.findByIdAndDelete.mockReturnValue(newTodo);
+        await TodoController.deleteTodo(req, res, next);
+        expect(res.statusCode).toBe(200);
+        expect(res._isEndCalled()).toBeTruthy();
+        expect(res._getJSONData()).toStrictEqual(newTodo);
+
+    });
+
+    it('should handle errors', async()=>{
+        const errorMessage = { message: 'Error deleting todo' };
+        const rejectedPromise = Promise.reject(errorMessage);
+        TodoModel.findByIdAndDelete.mockReturnValue(rejectedPromise);
+        await TodoController.deleteTodo(req, res, next);
+        expect(next).toHaveBeenCalledWith(errorMessage);
+    });
+
+    it('should return 404 status if todo._id is not found', async ()=>{
+        TodoModel.findByIdAndDelete.mockReturnValue(null);
+        await TodoController.deleteTodo(req, res, next);
+        expect(res.statusCode).toBe(404);
+        expect(res._isEndCalled()).toBeTruthy();
+    });
 
 });
 
@@ -49,8 +77,8 @@ describe('TodoController.updateTodo', ()=>{
         req.body = newTodo;
         TodoModel.findByIdAndUpdate.mockReturnValue(newTodo);
         await TodoController.updateTodo(req, res, next);
-        expect(res._isEndCalled()).toBeTruthy();
         expect(res.statusCode).toBe(200);
+        expect(res._isEndCalled()).toBeTruthy();
         expect(res._getJSONData()).toStrictEqual(newTodo);
     });
 
@@ -62,7 +90,7 @@ describe('TodoController.updateTodo', ()=>{
         expect(next).toHaveBeenCalledWith(errorMessage); 
     });
 
-    it('should return 404 when id is not found', async ()=>{
+    it('should return 404 when todo._id is not found', async ()=>{
         TodoModel.findByIdAndUpdate.mockReturnValue(null);
         await TodoController.updateTodo(req, res, next);
         expect(res.statusCode).toBe(404);
@@ -99,7 +127,7 @@ describe('TodoController.getTodoById', ()=>{
         expect(next).toHaveBeenCalledWith(errorMessage);
     });
 
-    it('should return 404 when id is not found', async ()=>{
+    it('should return 404 when todo._id is not found', async ()=>{
         TodoModel.findById.mockReturnValue(null);
         await TodoController.getTodoById(req, res, next);
         expect(res.statusCode).toBe(404);
