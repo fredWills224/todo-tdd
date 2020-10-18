@@ -4,6 +4,7 @@ const newTodo = require('../mock-data/new-todo.json');
 
 const endpointUrl = '/todos/';
 let firstTodo, newTodId;
+const nonExistingTodoId = '5f8aecb35252ce24f8c89099'
 describe(endpointUrl, ()=>{
     
     beforeEach(()=>{
@@ -31,7 +32,7 @@ describe(endpointUrl, ()=>{
 
     test('GET todoById when id doesnt exist' + endpointUrl + ':todoId', async ()=>{
         const response = await request(app)
-            .get(endpointUrl + '5f8aecb35252ce24f8c89099')
+            .get(endpointUrl + nonExistingTodoId)
         ;
         expect(response.statusCode).toBe(404);
         
@@ -76,6 +77,15 @@ describe(endpointUrl, ()=>{
         expect(res.body.title).toBe(testData.title);
         expect(res.body.done).toBe(testData.done);
     
+    });
+
+    it('should return 404 on PUT ' +endpointUrl, async ()=>{
+        const testData = { title: 'Make integration test for PUT 404', done: true };
+        const res = await request(app)
+            .put(endpointUrl + nonExistingTodoId)
+            .send(testData)
+        ;
+        expect(res.statusCode).toBe(404);
     });
 
 });
