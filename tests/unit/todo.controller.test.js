@@ -43,6 +43,21 @@ describe('TodoController.updateTodo', ()=>{
         expect(res._getJSONData()).toStrictEqual(newTodo);
     });
 
+    it('should handle errors', async ()=>{
+        const errorMessage = { message: 'Error updating todo' };
+        const rejectedError = Promise.reject(errorMessage);
+        TodoModel.findByIdAndUpdate.mockReturnValue(rejectedError);
+        await TodoController.updateTodo(req, res, next);
+        expect(next).toHaveBeenCalledWith(errorMessage); 
+    });
+
+    it('should return 404 when id is not found', async ()=>{
+        TodoModel.findByIdAndUpdate.mockReturnValue(null);
+        await TodoController.updateTodo(req, res, next);
+        expect(res.statusCode).toBe(404);
+        expect(res._isEndCalled()).toBeTruthy();
+    });
+
 });
 
 describe('TodoController.getTodoById', ()=>{
@@ -73,7 +88,7 @@ describe('TodoController.getTodoById', ()=>{
         expect(next).toHaveBeenCalledWith(errorMessage);
     });
 
-    it('should return 404 when item doesnt exist', async ()=>{
+    it('should return 404 when id is not found', async ()=>{
         TodoModel.findById.mockReturnValue(null);
         await TodoController.getTodoById(req, res, next);
         expect(res.statusCode).toBe(404);
